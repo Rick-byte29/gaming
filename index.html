@@ -1,572 +1,422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Phantom Strike - FPP Shooter Game</title>
-<style>
-  /* Reset */
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
-
-  /* Body & Dark theme */
-  body {
-    font-family: 'Orbitron', sans-serif;
-    background: #0b0b0d;
-    color: #eee;
-    overflow-x: hidden;
-    perspective: 1200px;
-  }
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap');
-
-  /* Loading screen */
-  #loading {
-    position: fixed;
-    inset: 0;
-    background: #000814;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    flex-direction: column;
-    color: #00ffc8;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 1.4rem;
-    letter-spacing: 2px;
-    user-select: none;
-  }
-  #loading .spinner {
-    border: 5px solid #002b36;
-    border-top: 5px solid #00ffc8;
-    border-radius: 50%;
-    width: 70px;
-    height: 70px;
-    animation: spin 1.5s linear infinite;
-    margin-bottom: 20px;
-  }
-  @keyframes spin {
-    0% {transform: rotate(0deg);}
-    100% {transform: rotate(360deg);}
-  }
-
-  /* Sticky Header */
-  header.sticky-bar {
-    position: sticky;
-    top: 0;
-    background: #001d3d;
-    padding: 10px;
-    text-align: center;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.2rem;
-    color: #00ffc8;
-    border-bottom: 2px solid #00ffc8;
-    z-index: 999;
-    letter-spacing: 2px;
-  }
-
-  /* Container */
-  main {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  /* Animated Headings */
-  h1, h2 {
-    font-family: 'Orbitron', sans-serif;
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 10px;
-    opacity: 0;
-    transform: translateY(30px);
-    animation-fill-mode: forwards;
-  }
-  h1 {
-    font-size: 3rem;
-    color: #00ffc8;
-    animation: fadeInUp 1s ease forwards;
-    animation-delay: 0.5s;
-  }
-  h2 {
-    font-size: 1.6rem;
-    color: #70fff3;
-    animation: fadeInUp 1s ease forwards;
-    animation-delay: 1s;
-  }
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maa ka bharosa</title>
+  <style>
+    /* Reset and base styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
-  }
-
-  /* Subheading animation */
-  .subheading {
-    font-family: 'Orbitron', sans-serif;
-    text-align: center;
-    color: #22fff7;
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    opacity: 0;
-    animation: fadeIn 2s ease forwards;
-    animation-delay: 1.5s;
-  }
-  @keyframes fadeIn {
-    to {
-      opacity: 1;
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #090b12;
+      color: #f1f1f0;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
-  }
-
-  /* 3D Carousel */
-  .carousel-container {
-    perspective: 1500px;
-    width: 100%;
-    max-width: 1000px;
-    height: 400px;
-    margin: 40px auto 50px;
-    position: relative;
-    overflow: visible;
-    touch-action: pan-y;
-  }
-  .carousel {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 1s;
-    cursor: grab;
-  }
-  .carousel:active {
-    cursor: grabbing;
-  }
-  .carousel-item {
-    position: absolute;
-    width: 280px;
-    height: 180px;
-    top: 110px;
-    left: 50%;
-    margin-left: -140px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px #00ffc8aa;
-    transition: transform 1s, opacity 1s;
-    background-size: cover;
-    background-position: center;
-    border: 3px solid #00ffc8;
-    outline: 1px solid #007a66aa;
-  }
-
-  /* Carousel nav buttons */
-  .carousel-nav {
-    text-align: center;
-    margin-top: 15px;
-  }
-  .carousel-btn {
-    background: #00665a;
-    color: #00ffc8;
-    border: none;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.3rem;
-    padding: 8px 18px;
-    margin: 0 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.3s ease;
-  }
-  .carousel-btn:hover {
-    background-color: #00ffc8a0;
-    color: #001d3d;
-  }
-
-  /* Testimonials */
-  .testimonials {
-    max-width: 900px;
-    margin: 50px auto 60px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-  }
-  .testimonial {
-    background: #001d3d;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 0 20px #00ffccaa;
-    font-family: 'Share Tech Mono', monospace;
-    opacity: 0;
-    transform: translateZ(100px);
-    animation: fadeIn3d 1.3s ease forwards;
-  }
-  @keyframes fadeIn3d {
-    to {
-      opacity: 1;
-      transform: translateZ(0);
+    a {
+      color: inherit;
+      text-decoration: none;
     }
-  }
-  .testimonial p {
-    font-size: 0.95rem;
-    margin-bottom: 10px;
-    color: #b1f7f0;
-  }
-  .testimonial .author {
-    font-weight: 700;
-    color: #00ffc8;
-    font-size: 1rem;
-  }
 
-  /* Scroll animated container */
-  .scroll-animate {
-    scroll-margin-top: 80px;
-    opacity: 0;
-    transform-style: preserve-3d;
-    transform: translateZ(150px);
-    transition: all 1s ease;
-  }
-  .scroll-animate.visible {
-    opacity: 1;
-    transform: translateZ(0);
-  }
+    /* Navigation Bar */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(9, 11, 18, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 1000;
+      backdrop-filter: saturate(180%) blur(20px);
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      color: #f1f1f0;
+      cursor: default;
+      user-select: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li {
+      margin-left: 2rem;
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+    nav ul li a {
+      color: #f1f1f0;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: color 0.3s;
+    }
+    nav ul li a:hover,
+    nav ul li a:focus {
+      color: #f75c03;
+    }
 
-  /* About Footer */
-  footer {
-    background: #001521;
-    padding: 30px 20px;
-    color: #00ffc8;
-    font-family: 'Orbitron', sans-serif;
-    text-align: center;
-  }
-  footer p {
-    max-width: 900px;
-    margin: 0 auto 20px;
-    font-size: 1rem;
-    color: #84fff6;
-  }
-  footer .developers {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-  }
-  footer .dev {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #00ffc8cc;
-    font-size: 0.9rem;
-    width: 130px;
-    user-select: none;
-  }
-  footer .dev img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 2px solid #00ffc8cc;
-    margin-bottom: 8px;
-    object-fit: cover;
-  }
+    /* Hero Section with parallax layers */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 6rem;
+      background: linear-gradient(180deg, #000000cc 0%, #000a1aab 50%, transparent 90%);
+    }
 
-  /* Waitlist Form */
-  .waitlist {
-    max-width: 500px;
-    background: #001d3d;
-    margin: 0 auto 50px;
-    padding: 25px 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #00ffc8aa;
-    font-family: 'Share Tech Mono', monospace;
-    opacity: 0;
-    animation: fadeIn 1.5s forwards;
-    animation-delay: 2s;
-  }
-  .waitlist h3 {
-    margin-bottom: 15px;
-    color: #00ffc8;
-    font-size: 1.4rem;
-    text-align: center;
-  }
-  .waitlist form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  .waitlist input[type="email"] {
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1rem;
-    font-family: 'Share Tech Mono', monospace;
-    outline: none;
-  }
-  .waitlist input[type="email"]:focus {
-    box-shadow: 0 0 10px #00ffd8;
-  }
-  .waitlist button {
-    background: #00ffc8;
-    color: #001d3d;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Orbitron', sans-serif;
-    transition: background-color 0.3s ease;
-  }
-  .waitlist button:hover {
-    background-color: #00b38d;
-  }
+    /* Parallax container and layers */
+    .parallax {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .parallax-layer {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform-style: preserve-3d;
+      will-change: transform;
+      user-select: none;
+    }
 
-  /* HD Images */
-  .fps-screenshots {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    max-width: 1000px;
-    margin: 40px auto 60px;
-  }
-  .fps-screenshots img {
-    width: 320px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 15px;
-    box-shadow: 0 0 25px #00ffc8aa;
-    border: 3px solid #00ffcc;
-    transition: transform 0.4s ease;
-    cursor: pointer;
-  }
-  .fps-screenshots img:hover {
-    transform: scale(1.05) rotateY(15deg);
-    box-shadow: 0 0 35px #00ffee;
-  }
+    /* Placeholder layers with approximate aspect ratios and sizes */
+    /* Layer 1: Farthest background mountain */
+    .layer-1 {
+      width: 120%;
+      max-width: 1900px;
+      height: auto;
+      bottom: 0;
+      transform: translateX(-50%) translateZ(0);
+      /* Placeholder: dark muted mountain silhouette */
+      background: linear-gradient(135deg, #1b2a3a, #0c111a);
+      border-radius: 40px 40px 0 0;
+    }
+    /* Layer 2: Secondary mountain shapes */
+    .layer-2 {
+      width: 110%;
+      max-width: 1700px;
+      height: 60vh;
+      bottom: 0;
+      transform: translateX(-50%) translateZ(0);
+      background: linear-gradient(135deg, #304055, #1c2535);
+      border-radius: 40px 40px 0 0;
+    }
+    /* Layer 3: Foreground shapes and trees */
+    .layer-3 {
+      width: 105%;
+      max-width: 1600px;
+      height: 65vh;
+      bottom: 0;
+      transform: translateX(-50%) translateZ(0);
+      background: linear-gradient(135deg, #49606c, #334652);
+      border-radius: 40px 40px 0 0;
+    }
+    /* Layer 4: Foreground trees silhouette */
+    .layer-4 {
+      width: 100%;
+      max-width: 1500px;
+      height: 70vh;
+      bottom: 0;
+      transform: translateX(-50%) translateZ(0);
+      background: linear-gradient(135deg, #255032, #1b3a23);
+      border-radius: 40px 40px 0 0;
+    }
 
-  /* Misc */
-  a, a:visited {
-    color: #00ffc8;
-    text-decoration: none;
-  }
-</style>
+    /* Hero text container */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 1rem 2rem;
+    }
+    .hero-content h1 {
+      font-weight: 900;
+      font-size: 3rem;
+      line-height: 1.1;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      letter-spacing: 6px;
+      color: #f75c03;
+      user-select: none;
+    }
+    .hero-content p {
+      font-weight: 300;
+      font-size: 1.25rem;
+      line-height: 1.4;
+      margin-bottom: 2rem;
+      color: #ddd;
+    }
+
+    /* Hero button */
+    .hero-button {
+      padding: 0.8rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #f75c03;
+      text-transform: uppercase;
+      background: transparent;
+      border: 3px solid #f75c03;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      user-select: none;
+      box-shadow:
+        0 0 5px #f75c03,
+        inset 0 0 10px #f75c03;
+    }
+    .hero-button:hover,
+    .hero-button:focus {
+      background: #f75c03;
+      color: #0a0400;
+      outline: none;
+    }
+
+    /* Sections styling */
+    section {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      color: #eee;
+    }
+
+    /* Section headings */
+    section h2 {
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 1.5px;
+      color: #f75c03;
+      user-select: none;
+    }
+
+    /* Paragraphs mimic original spacing and style */
+    section p {
+      font-weight: 300;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      margin-bottom: 1.4rem;
+      color: #ddd;
+      max-width: 850px;
+    }
+
+    /* Video placeholder section with fixed ratio and overlay */
+    .video-placeholder {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      aspect-ratio: 16 / 9;
+      margin: 2rem auto;
+      background: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #666;
+      font-size: 1.2rem;
+      border-radius: 15px;
+      user-select: none;
+      box-shadow: 0 0 20px rgba(247, 92, 3, 0.5);
+    }
+
+    /* Button section below video */
+    .button-container {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    /* Footer styling */
+    footer {
+      background: #080a11;
+      color: #666;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.875rem;
+      user-select: none;
+    }
+
+    /* Responsive and scrolling animations */
+
+    /* Responsive navigation menu on smaller screens */
+    @media (max-width: 740px) {
+      nav ul {
+        display: none;
+      }
+      .menu-toggle {
+        display: block;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        position: relative;
+      }
+      .menu-toggle span,
+      .menu-toggle span::before,
+      .menu-toggle span::after {
+        display: block;
+        position: absolute;
+        background: #f75c03;
+        height: 4px;
+        width: 100%;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+      .menu-toggle span {
+        top: 14px;
+      }
+      .menu-toggle span::before {
+        content: '';
+        top: -10px;
+      }
+      .menu-toggle span::after {
+        content: '';
+        top: 10px;
+      }
+      .menu-toggle.open span {
+        background: transparent;
+      }
+      .menu-toggle.open span::before {
+        transform: rotate(45deg);
+        top: 0;
+      }
+      .menu-toggle.open span::after {
+        transform: rotate(-45deg);
+        top: 0;
+      }
+      nav.open ul {
+        display: flex;
+        flex-direction: column;
+        background: rgba(9, 11, 18, 0.95);
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 180px;
+        border-radius: 10px;
+        padding: 1rem 0;
+        box-shadow: 0 0 12px #f75c03cc;
+      }
+      nav.open ul li {
+        margin: 0.5rem 0;
+        text-align: center;
+      }
+    }
+
+    /* Parallax effect via JS scroll handler */
+
+  </style>
 </head>
 <body>
 
-<!-- Loading Screen -->
-<div id="loading">
-  <div class="spinner"></div>
-  Loading Phantom Strike...
-</div>
+  <!-- Header / Navigation -->
+  <header>
+    <div class="logo" aria-label="Maa ka bharosa Logo">Maa ka bharosa</div>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#story">Story</a></li>
+        <li><a href="#gameplay">Gameplay</a></li>
+        <li><a href="#media">Media</a></li>
+        <li><a href="#footer">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
+    </button>
+  </header>
 
-<!-- Sticky Launch Header -->
-<header class="sticky-bar">
-  🚀 Launching on 15th August 2025 - Get Ready to Strike! 🚀
-</header>
 
-<main>
-
-<!-- Headings and Subheadings -->
-<h1 class="fade-text">Phantom Strike</h1>
-<h2 class="fade-text">The Ultimate FPP Shooter Experience</h2>
-<div class="subheading">Engage the Shadows. Rule the Battlefield.</div>
-
-<!-- 3D Carousel -->
-<div class="carousel-container" aria-label="Game Features Carousel">
-  <div id="carousel" class="carousel" tabindex="0">
-    <!-- Carousel Items dynamically positioned -->
-    <div class="carousel-item" style="background-image:url('https://cdn.wallpapersafari.com/44/48/J2NcoA.jpg');" aria-label="Dynamic Environments"></div>
-    <div class="carousel-item" style="background-image:url('https://wallpapers.com/images/hd/modern-warzone-game-omenslash-g7pdbiu6ipfi6uqj.jpg');" aria-label="Realistic Ballistics"></div>
-    <div class="carousel-item" style="background-image:url('https://wallpaperaccess.com/full/2807493.jpg');" aria-label="Team Tactics"></div>
-    <div class="carousel-item" style="background-image:url('https://i.pinimg.com/originals/b0/ad/9e/b0ad9eff4879b9167a22f88a0a16800e.jpg');" aria-label="Advanced AI Enemies"></div>
-    <div class="carousel-item" style="background-image:url('https://www.pixelstalk.net/wp-content/uploads/2016/05/Call-Of-Duty-FPS-Game-HD-Wallpaper.jpg');" aria-label="Customizable Loadouts"></div>
-  </div>
-  <div class="carousel-nav">
-    <button class="carousel-btn" id="prevBtn" aria-label="Previous Feature">&#10094;</button>
-    <button class="carousel-btn" id="nextBtn" aria-label="Next Feature">&#10095;</button>
-  </div>
-</div>
-
-<!-- FPS Screenshots -->
-<div class="fps-screenshots" aria-label="FPS Game Screenshots">
-  <img src="https://cdn.wallpapersafari.com/37/22/JhYvAm.jpg" alt="Red Dead Redemption 2 Gameplay Scene" />
-  <img src="https://cdn.wallpapersafari.com/62/22/mSOG7B.jpg" alt="Call of Duty Warzone Gameplay" />
-  <img src="https://wallpaperaccess.com/full/5923084.jpg" alt="Battlefield 2042 Game Scene" />
-</div>
-
-<!-- Testimonials -->
-<section class="testimonials" aria-label="Game Player Testimonials">
-  <div class="testimonial" style="animation-delay: 0.2s;">
-    <p>"Phantom Strike brings back the thrills of classic FPP shooters with jaw-dropping graphics."</p>
-    <div class="author">- NeoPixel</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 0.4s;">
-    <p>"The team AI and environment dynamics are unlike anything I've played. Immersive!</p>
-    <div class="author">- GamerX45</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 0.6s;">
-    <p>"Customizable loadouts let me tailor my gameplay style perfectly."</p>
-    <div class="author">- ShadowFox</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 0.8s;">
-    <p>"Can't wait for the official launch. The waitlist form was slick and easy."</p>
-    <div class="author">- PixelWarrior</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 1s;">
-    <p>"The graphics bring the battlefield alive with stunning realism."</p>
-    <div class="author">- VRDemon</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 1.2s;">
-    <p>"Phantom Strike’s suspenseful gameplay had me hooked immediately."</p>
-    <div class="author">- SniperKing</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 1.4s;">
-    <p>"The 3D carousel on this site is dope, just like the game."</p>
-    <div class="author">- ByteBlaster</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 1.6s;">
-    <p>"Smooth animations and sleek UI make the whole experience top-notch."</p>
-    <div class="author">- ConsoleCrusader</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 1.8s;">
-    <p>"The dark theme is perfect for late-night gaming sessions."</p>
-    <div class="author">- MidnightHawk</div>
-  </div>
-  <div class="testimonial" style="animation-delay: 2s;">
-    <p>"Join the waitlist ASAP, you don’t want to miss Phantom Strike’s launch!"</p>
-    <div class="author">- CyberGhost</div>
-  </div>
-</section>
-
-<!-- Waitlist Form -->
-<section class="waitlist" aria-label="Join Waitlist Form">
-  <h3>Join the Phantom Strike Waitlist</h3>
-  <form id="waitlistForm" autocomplete="off">
-    <input type="email" id="email" name="email" placeholder="Enter your email address" required aria-required="true" />
-    <button type="submit">Notify Me</button>
-  </form>
-</section>
-
-</main>
-
-<!-- Footer About & Developers -->
-<footer>
-  <p>Phantom Strike is the next generation FPP shooter pushing the boundaries of immersive gameplay, hyper-realistic graphics, and intense team tactical warfare. Prepare to strike from the shadows and dominate the battlefield.</p>
-  <div class="developers" aria-label="Developers Team">
-    <div class="dev">
-      <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Developer Rick Johnson" />
-      Rick Johnson
+  <!-- Hero Section with layered parallax background -->
+  <section class="hero" aria-label="Hero section">
+    <div class="parallax">
+      <div class="parallax-layer layer-1"></div>
+      <div class="parallax-layer layer-2"></div>
+      <div class="parallax-layer layer-3"></div>
+      <div class="parallax-layer layer-4"></div>
     </div>
-    <div class="dev">
-      <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Developer Lisa Wong" />
-      Lisa Wong
+    <div class="hero-content">
+      <h1>Maa ka bharosa</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dignissim convallis est. Quisque aliquam.</p>
+      <button class="hero-button" type="button">Play Now</button>
     </div>
-    <div class="dev">
-      <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Developer Marcus Lee" />
-      Marcus Lee
+  </section>
+
+  <!-- Story Section -->
+  <section id="story" aria-labelledby="story-title">
+    <h2 id="story-title">Story</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis, nisi a semper efficitur, diam urna ultrices justo, a pulvinar erat augue nec felis.</p>
+    <p>Proin sit amet luctus tortor. Donec sed orci vel libero consectetur pulvinar. Morbi elementum eros non bibendum sodales.</p>
+    <p>Fusce eros sapien, pulvinar at velit vitae, cursus tincidunt ligula. Curabitur vulputate, metus eu ultricies ultricies, nunc sem consequat justo, nec faucibus lorem lorem ac augue.</p>
+  </section>
+
+  <!-- Gameplay Section -->
+  <section id="gameplay" aria-labelledby="gameplay-title">
+    <h2 id="gameplay-title">Gameplay</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Phasellus quis sapien facilisis, imperdiet nulla in, gravida nulla.</p>
+    <p>Praesent posuere lorem elit, a gravida tellus accumsan non. Nullam eget tellus non urna pharetra tincidunt.</p>
+    <p>Vivamus vehicula, erat nec malesuada pretium, felis odio dignissim nunc, non dignissim ligula eros nec mit.</p>
+  </section>
+
+  <!-- Media Section with video placeholder -->
+  <section id="media" aria-labelledby="media-title">
+    <h2 id="media-title">Media</h2>
+    <div class="video-placeholder" aria-label="Video placeholder">
+      Media Placeholder
     </div>
-    <div class="dev">
-      <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="Developer Amara Singh" />
-      Amara Singh
+    <div class="button-container">
+      <button class="hero-button" type="button">Watch Trailer</button>
     </div>
-  </div>
-</footer>
+  </section>
 
-<script>
-  /* Loading screen fade out on DOM ready */
-  window.addEventListener('load', () => {
-    const loading = document.getElementById('loading');
-    loading.style.opacity = '0';
-    setTimeout(() => loading.style.display = 'none', 600);
-  });
+  <!-- Footer -->
+  <footer id="footer">
+    <p>© 2025 Maa ka bharosa. All rights reserved.</p>
+  </footer>
 
-  // Carousel variables
-  const carousel = document.getElementById('carousel');
-  const items = [...carousel.children];
-  const itemCount = items.length;
-  let angle = 360 / itemCount; // angle between items
-  let selectedIndex = 0;
-
-  // Position carousel items in 3D circle
-  function positionCarousel() {
-    items.forEach((item, i) => {
-      const rotateY = angle * i;
-      item.style.transform = `rotateY(${rotateY}deg) translateZ(400px)`;
+  <script>
+    // Responsive navigation toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav');
+    menuToggle.addEventListener('click', () => {
+      nav.classList.toggle('open');
+      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', !expanded);
+      menuToggle.classList.toggle('open');
     });
-  }
-  positionCarousel();
 
-  function updateCarousel(index) {
-    const rotate = angle * index * -1;
-    carousel.style.transform = `translateZ(-400px) rotateY(${rotate}deg)`;
-  }
-  updateCarousel(selectedIndex);
-
-  // Next & Prev controls
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    selectedIndex++;
-    if (selectedIndex >= itemCount) selectedIndex = 0;
-    updateCarousel(selectedIndex);
-  });
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    selectedIndex--;
-    if (selectedIndex < 0) selectedIndex = itemCount - 1;
-    updateCarousel(selectedIndex);
-  });
-
-  // Swipe support for carousel
-  let startX = 0;
-  let isDragging = false;
-
-  carousel.addEventListener('pointerdown', event => {
-    startX = event.clientX;
-    isDragging = true;
-    carousel.style.cursor = 'grabbing';
-  });
-
-  carousel.addEventListener('pointerup', event => {
-    if (!isDragging) return;
-    let diffX = event.clientX - startX;
-    if (diffX > 30) {
-      // swipe right
-      selectedIndex--;
-      if (selectedIndex < 0) selectedIndex = itemCount - 1;
-    } else if (diffX < -30) {
-      // swipe left
-      selectedIndex++;
-      if (selectedIndex >= itemCount) selectedIndex = 0;
-    }
-    updateCarousel(selectedIndex);
-    isDragging = false;
-    carousel.style.cursor = 'grab';
-  });
-
-  carousel.addEventListener('pointerleave', () => {
-    if (isDragging) {
-      isDragging = false;
-      carousel.style.cursor = 'grab';
-    }
-  });
-
-  // Fade-in 3D scroll animations for testimonials and waitlist
-  const scrollElems = document.querySelectorAll('.testimonial, .waitlist');
-  function checkVisibility() {
-    const triggerBottom = window.innerHeight * 0.85;
-    scrollElems.forEach(elem => {
-      const top = elem.getBoundingClientRect().top;
-      if (top < triggerBottom) {
-        elem.classList.add('visible');
-      }
+    // Parallax scrolling effect
+    const layers = document.querySelectorAll('.parallax-layer');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset;
+      // Different layers move vertically at different rates
+      layers.forEach((layer, index) => {
+        let depth = (index + 1) * 0.2; // speed multiplier (adjust for effect)
+        let movement = scrollTop * depth;
+        // Limit vertical translation for smooth effect
+        layer.style.transform = `translateX(-50%) translateY(${movement * 0.3}px)`;
+      });
     });
-  }
-  window.addEventListener('scroll', checkVisibility);
-  window.addEventListener('load', checkVisibility);
-
-  // Waitlist form submit (simple animation & alert)
-  const form = document.getElementById('waitlistForm');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const emailInput = e.target.email;
-    if (emailInput.value.trim()) {
-      alert(`Thank you for joining the waitlist, ${emailInput.value}!`);
-      emailInput.value = '';
-    }
-  });
-</script>
+  </script>
 
 </body>
 </html>
