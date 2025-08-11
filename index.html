@@ -1,206 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hitman Reloaded</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorForge Academy</title>
 
-<!-- Google Fonts: Roboto and Airbeat -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
-@font-face {
-  font-family: 'Airbeat';
-  src: url('https://cdn.jsdelivr.net/gh/aaronfrost/airbeatfont/AIRBEAT.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
+:root {
+    --primary-color: #FFD24C;
+    --bg-dark: #0a0a0a;
+    --bg-section: #111111;
+    --text-light: #f5f5f5;
+    --max-width: 1200px;
 }
 
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Roboto', sans-serif;
-  background-color: #111;
-  color: white;
-  overflow-x: hidden;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 
-h1,h2,h3,h4,h5,h6 {
-  font-family: 'Airbeat', cursive, sans-serif;
-  font-weight: normal;
-  margin: 0 0 20px 0;
-  background: linear-gradient(90deg, #FFDD55, #FF8C00);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* HEADER */
+header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 50px;
+    transition: background 0.3s ease;
+}
+header.scrolled { background: rgba(0,0,0,0.9); }
+header h1 { color: var(--primary-color); font-weight: 700; font-size: 1.6rem; letter-spacing: 1px; }
+header nav a {
+    color: var(--text-light); text-decoration: none; margin-left: 30px; font-weight: 500;
+    transition: color 0.3s;
+}
+header nav a:hover { color: var(--primary-color); }
+
+/* SECTIONS */
+section {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 80px 20px; text-align: center; flex-direction: column;
+}
+h2.section-title { font-size: 2.5rem; margin-bottom: 20px; font-weight: 700; }
+p.section-text { font-size: 1.1rem; max-width: 800px; line-height: 1.6; margin: auto; font-family: 'Poppins', sans-serif; }
+
+/* HERO CINEMATIC BG */
+.hero {
+    position: relative;
+    flex-direction: column;
+    overflow: hidden;
+    background: #000;
+}
+.hero-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1522039897668-446e98d015a0?auto=format&fit=crop&w=1650&q=80');
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    transform: scale(1.1);
+    filter: blur(10px);
+    opacity: 0;
+}
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+.hero h1 { font-size: 3rem; max-width: 900px; font-weight: 700; }
+.hero .highlight { color: var(--primary-color); }
+.hero p { font-size: 1.2rem; margin-top: 20px; max-width: 600px; }
+.btn {
+    display: inline-block; background: var(--primary-color); color: #000;
+    padding: 15px 30px; border-radius: 8px; font-weight: 600; margin-top: 30px; text-decoration: none;
+    transition: background 0.3s ease;
+}
+.btn:hover { background: #e6bb3c; }
+
+/* OTHER SECTIONS */
+.bg-dark { background-color: var(--bg-dark); }
+.bg-alt { background-color: var(--bg-section); }
+
+.courses-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px; max-width: var(--max-width); margin: auto;
 }
 
-.section {
-  min-height: 100vh;
-  padding: 30vh 5vw 30vh 5vw;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+.course-card {
+    background: #1a1a1a; padding: 30px; border-radius: 10px; text-align: left;
+    opacity: 0; transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+.course-card:hover { transform: translateY(-5px); }
+.course-card h3 { color: var(--primary-color); margin-bottom: 10px; }
+.course-card p { font-size: 0.95rem; color: #ccc; }
+
+/* FOOTER */
+footer {
+    background: #000; padding: 40px 20px; text-align: center;
+    color: #777; font-size: 0.9rem;
 }
 
-.background-image {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%) scale(1);
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  z-index: -1;
-  will-change: transform, opacity;
-  filter: brightness(0.75);
-}
-
-.text-content {
-  max-width: 900px;
-  color: white;
-  font-size: 1.4rem;
-  line-height: 1.6;
-  padding: 0 40px;
-  will-change: transform, opacity;
-}
-
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: auto;
-  overflow: visible;
-  will-change: transform, opacity;
-}
-
-.logo {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%) scale(1);
-  font-family: 'Airbeat', cursive;
-  font-size: 3rem;
-  background: linear-gradient(90deg, #FFDD55, #FF8C00);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  z-index: 1000;
-  user-select: none;
-  pointer-events: none;
-  will-change: transform, opacity;
+/* LETTER ANIMATIONS */
+.split-text span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(100%) rotateX(90deg);
+    transform-origin: bottom;
 }
 </style>
 </head>
 <body>
 
-<div class="logo">Hitman Reloaded</div>
+<header id="mainHeader">
+    <h1 class="split-text">CreatorForge</h1>
+    <nav>
+        <a href="#about">About</a>
+        <a href="#programs">Programs</a>
+        <a href="#impact">Impact</a>
+        <a href="#join">Join</a>
+    </nav>
+</header>
 
-<section class="section" id="section1">
-  <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80" alt="Background 1" class="background-image" />
-  <div class="container">
-    <h1>Welcome to Hitman Reloaded</h1>
-    <p class="text-content">Experience an unparalleled thriller adventure with cinematic depth and dynamic storytelling. Dive into a world where every action counts and every shadow hides a secret. Scroll down to explore the deadly universe of Hitman Reloaded.</p>
-  </div>
+<section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <h1 class="split-text hero-title">Forge Your <span class="highlight">Creator Journey</span> into a Powerful Brand</h1>
+        <p class="split-text hero-sub">Learn storytelling, growth strategies, and monetization from top digital minds. Build your brand, your way.</p>
+        <a href="#programs" class="btn split-text hero-btn">Start Learning</a>
+    </div>
 </section>
 
-<section class="section" id="section2">
-  <img src="https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?auto=format&fit=crop&w=1920&q=80" alt="Background 2" class="background-image" />
-  <div class="container">
-    <h2>The City of Shadows</h2>
-    <p class="text-content">Navigate the sprawling metropolis where danger lurks behind every corner. Camouflage yourself as part of the city’s backdrop and observe your targets without being detected. The bustling streets are alive with secrets waiting to be uncovered.</p>
-  </div>
+<section class="bg-dark" id="about">
+    <h2 class="section-title split-text">Why CreatorForge?</h2>
+    <p class="section-text split-text">CreatorForge Academy is built for the dreamers, the hustlers, and the innovators. We offer an immersive learning path to help you transform your passion into a sustainable career, using proven frameworks and real industry experience.</p>
 </section>
 
-<section class="section" id="section3">
-  <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1920&q=80" alt="Background 3" class="background-image" />
-  <div class="container">
-    <h2>Master the Art of Stealth</h2>
-    <p class="text-content">Perfect your skills in silent takedowns, disguises, and subterfuge. Every mission demands creativity and precision, challenging your ability to adapt and improvise under pressure. Success lies in striking without leaving a trace.</p>
-  </div>
+<section class="bg-alt" id="programs">
+    <h2 class="section-title split-text">Our Programs</h2>
+    <div class="courses-grid">
+        <div class="course-card">
+            <h3>Storytelling Mastery</h3>
+            <p>Craft compelling stories that captivate audiences and inspire action.</p>
+        </div>
+        <div class="course-card">
+            <h3>Audience Growth</h3>
+            <p>Learn strategic growth hacks to scale your audience organically and sustainably.</p>
+        </div>
+        <div class="course-card">
+            <h3>Brand Deals & Monetization</h3>
+            <p>Discover how to monetize through sponsorships, products, and collaborations.</p>
+        </div>
+    </div>
 </section>
 
-<section class="section" id="section4">
-  <img src="https://images.unsplash.com/photo-1508610048659-baf5eff8abf5?auto=format&fit=crop&w=1920&q=80" alt="Background 4" class="background-image" />
-  <div class="container">
-    <h2>Scenarios and Challenges</h2>
-    <p class="text-content">Each chapter presents unique scenarios—high-stakes assassinations, covert infiltrations, and tactical rescues. Adapt your strategy depending on the environment and the behavior of targets to claim victory without leaving a trail.</p>
-  </div>
+<section class="bg-dark" id="impact">
+    <h2 class="section-title split-text">Our Impact</h2>
+    <p class="section-text split-text">Thousands of creators have transformed their online presence with CreatorForge. From amateur vloggers to full‑time influencers, our alumni have reached millions of viewers and built lasting careers in the creator economy.</p>
 </section>
 
-<section class="section" id="section5">
-  <img src="https://images.unsplash.com/photo-1486308510493-cb6f7234bad9?auto=format&fit=crop&w=1920&q=80" alt="Background 5" class="background-image" />
-  <div class="container">
-    <h2>Weapons & Gadgets</h2>
-    <p class="text-content">Utilize an arsenal of high-tech gear and classic weaponry tailored to your mission style. From silenced pistols to hacking tools, every item offers options to customize your approach.</p>
-  </div>
+<section class="bg-alt" id="join">
+    <h2 class="section-title split-text">Join the Forge</h2>
+    <p class="section-text split-text">Your voice matters. Your story matters. It's time to share it with the world, and to make it unforgettable.</p>
+    <a href="#" class="btn split-text">Apply Now</a>
 </section>
 
-<section class="section" id="section6">
-  <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1920&q=80" alt="Background 6" class="background-image" />
-  <div class="container">
-    <h2>Dynamic Storytelling</h2>
-    <p class="text-content">Live through a complex narrative with multiple endings based on your choices. Every decision influences the storyline, forging a personalized experience with high replay value.</p>
-  </div>
-</section>
+<footer>
+    &copy; 2025 CreatorForge Academy. All rights reserved.
+</footer>
 
-<section class="section" id="section7">
-  <img src="https://images.unsplash.com/photo-1432810544583-4aebb0537d8e?auto=format&fit=crop&w=1920&q=80" alt="Background 7" class="background-image" />
-  <div class="container">
-    <h2>Join the Hunt</h2>
-    <p class="text-content">Prepare yourself for an intense, cinematic journey. Become the ultimate shadow operative and rewrite the rules of stealth in Hitman Reloaded.</p>
-  </div>
-</section>
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-<!-- GSAP + ScrollTrigger -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.1/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.1/ScrollTrigger.min.js"></script>
 <script>
-  gsap.registerPlugin(ScrollTrigger);
+// Split text into spans
+function splitTextToLetters(el) {
+    const text = el.innerHTML;
+    el.innerHTML = '';
+    text.split('').forEach(char => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        el.appendChild(span);
+    });
+}
+document.querySelectorAll('.split-text').forEach(splitTextToLetters);
 
-  const sections = gsap.utils.toArray("section.section");
-  const logo = document.querySelector('.logo');
+// Header scroll
+window.addEventListener('scroll', () => {
+    const header = document.getElementById('mainHeader');
+    window.scrollY > 50 ? header.classList.add('scrolled') : header.classList.remove('scrolled');
+});
 
-  sections.forEach((section, i) => {
-    const bgImage = section.querySelector('.background-image');
-    const heading = section.querySelector('h1, h2');
+// HERO intro animation
+window.addEventListener('load', () => {
+    const tl = gsap.timeline();
 
-    // Background image scales down (moves back) on scroll
-    gsap.to(bgImage, {
-      scale: 0.8,
-      ease: "none",
-      scrollTrigger: {
-        trigger: section,
-        start: "top center",
-        end: "bottom center",
-        scrub: true
-      }
+    // Background cinematic fade & scale
+    tl.to('.hero-bg', {
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 1.5,
+        scale: 1,
+        ease: "power2.out"
     });
 
-    // Heading scales up (comes near) on scroll
-    gsap.fromTo(heading, 
-      {scale: 0.6, opacity: 0},
-      {scale: 1, opacity: 1, ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top center",
-          end: "bottom center",
-          scrub: true
-        }
-      });
-  });
+    // Title letters
+    tl.to('.hero-title span', {
+        y: 0, opacity: 1, rotationX: 0,
+        duration: 0.8, ease: "back.out(1.7)",
+        stagger: 0.04
+    }, "-=1");
 
-  // Logo scaling and fading as user scrolls down
-  gsap.to(logo, {
-    scale: 0.7,
-    opacity: 0.5,
-    ease: "power1.out",
+    // Subtext
+    tl.to('.hero-sub span', {
+        y: 0, opacity: 1, rotationX: 0,
+        duration: 0.8, ease: "back.out(1.7)",
+        stagger: 0.02
+    }, "-=0.4");
+
+    // Button
+    tl.to('.hero-btn span', {
+        y: 0, opacity: 1, rotationX: 0,
+        duration: 0.6, ease: "back.out(1.7)",
+        stagger: 0.02
+    }, "-=0.3");
+});
+
+// Parallax background on scroll
+gsap.to('.hero-bg', {
     scrollTrigger: {
-      start: "top top",
-      end: "+=500",
-      scrub: true
-    }
-  });
+        trigger: '.hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+    },
+    y: '20%',
+    ease: "none"
+});
+
+// Scroll animations for other sections
+gsap.utils.toArray('.split-text').forEach(el => {
+    if (el.classList.contains('hero-title') || el.classList.contains('hero-sub') || el.classList.contains('hero-btn')) return;
+    gsap.to(el.querySelectorAll('span'), {
+        scrollTrigger: { trigger: el, start: "top 80%" },
+        y: 0, opacity: 1, rotationX: 0,
+        duration: 0.8, ease: "back.out(1.7)",
+        stagger: 0.04
+    });
+});
+
+// Course cards animation
+gsap.utils.toArray('.course-card').forEach((card, i) => {
+    gsap.to(card, {
+        scrollTrigger: { trigger: card, start: "top 85%" },
+        opacity: 1, y: 0,
+        delay: i * 0.15,
+        duration: 0.8, ease: "power2.out"
+    });
+});
 </script>
 
 </body>
