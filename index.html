@@ -3,679 +3,164 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Neon Fury: Shadow Ops - FPP Shooter Game</title>
+<title>Randi Vi</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-  @font-face {
-    font-family: 'Airbeat';
-    src: url('https://cdn.jsdelivr.net/gh/solrainha/air-balloon/airbeat/airbeat.ttf') format('truetype');
-  }
-
-  /* Reset */
+  /* Basic Reset */
   * {
-    margin: 0; padding: 0; box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  /* Body & Dark theme */
-  body {
-    font-family: 'Airbeat', 'Orbitron', sans-serif;
-    background: #0a0a0f;
-    color: #00ffea;
-    overflow-x: hidden;
-    perspective: 1400px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  body, html {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Arial Black', Arial, sans-serif;
+    background: #000;
+    color: #fff;
   }
 
-  /* Neon glow effect */
-  .neon-text {
-    color: #00ffe7;
-    text-shadow:
-      0 0 5px #00ffe7,
-      0 0 10px #00ffe7,
-      0 0 20px #00ffe7,
-      0 0 30px #00ffe7,
-      0 0 40px #00ffe7,
-      0 0 50px #00ffe7,
-      0 0 60px #00ffe7;
-  }
-
-  /* Loading screen */
-  #loading-screen {
+  /* Loading Screen Container */
+  #loadingScreen {
     position: fixed;
-    inset: 0;
-    background: #05050a;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    z-index: 10000;
-    color: #00ffe7;
-    font-family: 'Airbeat', cursive;
-    font-size: 2rem;
-    letter-spacing: 4px;
-    user-select: none;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
   }
-  #loading-progress {
-    width: 300px;
-    height: 25px;
-    border: 2px solid #00ffe7;
-    border-radius: 15px;
-    margin-top: 20px;
+  
+  /* Loading text effect */
+  #loadingScreen h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    letter-spacing: 0.15em;
+    color: #ff3c3c;
+    text-shadow: 0 0 10px #ff3c3c, 0 0 20px #ff3c3c;
+    animation: pulse 1.5s infinite alternate;
+  }
+
+  @keyframes pulse {
+    0% {opacity: 0.6;}
+    100% {opacity: 1;}
+  }
+
+  /* Spinner Animation */
+  .spinner {
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-top: 5px solid #ff3c3c;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.5s linear infinite;
+  }
+
+  @keyframes spin {
+    to {transform: rotate(360deg);}
+  }
+
+  /* Main Content styling */
+  #mainContent {
+    display: none;
+    height: 100vh;
+    perspective: 1200px;
+    background: linear-gradient(135deg, #0b0b0b, #221111);
     overflow: hidden;
   }
-  #loading-bar {
-    height: 100%;
-    width: 0;
-    background: linear-gradient(90deg, #00ffe7, #00b9aa);
-    border-radius: 15px;
-    box-shadow:
-      0 0 5px #00ffe7,
-      0 0 15px #00b9aa;
-    transition: width 0.05s linear;
-  }
 
-  /* Sticky Header */
-  header.sticky-bar {
-    position: sticky;
-    top: 0;
-    background: #001621;
-    padding: 12px 0;
-    text-align: center;
-    font-family: 'Airbeat', cursive;
-    font-size: 1.25rem;
-    color: #00ffe7;
-    border-bottom: 2px solid #00fff8;
-    user-select: none;
-    z-index: 1000;
-    text-transform: uppercase;
-  }
-
-  /* Container */
-  main {
-    max-width: 1100px;
-    margin: 40px auto 80px;
-    padding: 0 15px;
-  }
-
-  /* Animated Headings */
-  h1, h2 {
-    opacity: 0;
-    transform: translateY(40px);
-    animation-fill-mode: forwards;
-    text-align: center;
-    user-select: none;
-  }
-  h1 {
-    font-family: 'Airbeat', cursive;
-    font-size: 4rem;
-    letter-spacing: 5px;
-    margin-bottom: 0.3em;
-    color: #00ffe7;
-    text-shadow:
-      0 0 7px #00ffe7,
-      0 0 15px #00c9b4,
-      0 0 30px #00b99d;
-    animation: fadeUpNeon 1.5s ease forwards;
-    animation-delay: 0.4s;
-  }
-  h2 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.75rem;
-    margin-bottom: 1.2em;
-    color: #00d2ba;
-    text-shadow:
-      0 0 5px #00d2ba,
-      0 0 12px #00a08b;
-    animation: fadeUpNeon 1.5s ease forwards;
-    animation-delay: 1s;
-    letter-spacing: 2px;
-  }
-  @keyframes fadeUpNeon {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Subheading */
-  .subheading {
-    font-family: 'Orbitron', sans-serif;
-    text-align: center;
-    color: #00ffcc;
-    font-size: 1.1rem;
-    margin-bottom: 40px;
-    opacity: 0;
-    animation: fadeInNeon 2s ease forwards;
-    animation-delay: 1.6s;
-    text-shadow: 0 0 6px #00ffcc;
-  }
-  @keyframes fadeInNeon {
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* 3D Carousel Container */
-  .carousel-container {
-    perspective: 1600px;
-    width: 100%;
-    max-width: 900px;
-    height: 360px;
-    margin: 0 auto 70px;
+  .scene {
     position: relative;
-    overflow: visible;
-    touch-action: pan-y;
-  }
-  .carousel {
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-    cursor: grab;
-    user-select: none;
+    animation: sceneRotate 20s linear infinite;
   }
-  .carousel:active {
-    cursor: grabbing;
+
+  @keyframes sceneRotate {
+    from {transform: rotateY(0deg);}
+    to {transform: rotateY(360deg);}
   }
-  .carousel-item {
+
+  /* Example 3D animation boxes */
+  .cube {
     position: absolute;
-    width: 320px;
-    height: 180px;
-    top: 90px;
+    top: 50%;
     left: 50%;
-    margin-left: -160px;
-    border-radius: 20px;
-    box-shadow:
-      0 0 15px #00ffe7aa,
-      0 0 35px #00c9b4aa;
-    background-size: cover;
-    background-position: center;
-    border: 3px solid #00ffe7aa;
-    outline: 1px solid #008b7c88;
-    transition: transform 1s ease, opacity 1s ease;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    transform-style: preserve-3d;
+    animation: cubeRotate 10s linear infinite;
   }
 
-  /* Carousel navigation buttons */
-  .carousel-nav {
-    text-align: center;
-    margin-top: 18px;
-  }
-  .carousel-btn {
-    background: #004e43;
-    color: #00ffe7;
-    border: none;
-    font-family: 'Airbeat', cursive;
-    font-size: 1.4rem;
-    padding: 12px 22px;
-    margin: 0 18px;
-    border-radius: 30px;
-    cursor: pointer;
-    user-select: none;
-    box-shadow:
-      0 0 8px #00ffe7,
-      0 0 18px #00cfb8;
-    transition: background-color 0.35s ease;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-  .carousel-btn:hover {
-    background-color: #00ffe7;
-    color: #001614;
-    box-shadow:
-      0 0 24px #00ffe7,
-      0 0 40px #00ffb4;
+  @keyframes cubeRotate {
+    from {transform: rotateX(0deg) rotateY(0deg);}
+    to {transform: rotateX(360deg) rotateY(360deg);}
   }
 
-  /* FPS Screenshots */
-  .fps-screenshots {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-    max-width: 960px;
-    margin: 60px auto 90px;
-  }
-  .fps-screenshots img {
-    width: 320px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 20px;
-    box-shadow:
-      0 0 40px #00ffe7aa,
-      0 0 80px #00ccbfa8;
-    border: 4px solid #00ffe7bb;
-    cursor: pointer;
-    transition: transform 0.5s ease, box-shadow 0.5s ease;
-  }
-  .fps-screenshots img:hover {
-    transform: scale(1.08) rotateY(15deg);
-    box-shadow:
-      0 0 70px #00ffe7ff,
-      0 0 110px #00ffccff;
+  .face {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: #ff3c3c;
+    border: 2px solid #fff;
+    opacity: 0.8;
   }
 
-  /* Testimonials */
-  .testimonials {
-    max-width: 920px;
-    margin: 0 auto 70px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 26px;
-  }
-  .testimonial {
-    background: #00141d;
-    border-radius: 18px;
-    padding: 22px 24px;
-    box-shadow:
-      0 0 25px #00ffe7aa;
-    font-family: 'Orbitron', sans-serif;
-    color: #00ffe7dd;
-    opacity: 0;
-    transform: translateZ(120px);
-    animation: fadeMoveIn 1.3s ease forwards;
+  .face.front  { transform: translateZ(75px); }
+  .face.back   { transform: rotateY(180deg) translateZ(75px); }
+  .face.right  { transform: rotateY(90deg) translateZ(75px); }
+  .face.left   { transform: rotateY(-90deg) translateZ(75px); }
+  .face.top    { transform: rotateX(90deg) translateZ(75px); }
+  .face.bottom { transform: rotateX(-90deg) translateZ(75px); }
+
+  /* Title text in main content */
+  #title {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3.5rem;
+    color: #ff3c3c;
+    text-shadow: 0 0 20px #ff3c3c;
     user-select: none;
   }
-  .testimonial p {
-    font-size: 1rem;
-    margin-bottom: 14px;
-    line-height: 1.3;
-    font-weight: 500;
-    text-shadow: 0 0 5px #00ffe7bb;
-  }
-  .testimonial .author {
-    font-weight: 700;
-    color: #00ffcc;
-    font-size: 1.05rem;
-    letter-spacing: 0.85px;
-  }
-  @keyframes fadeMoveIn {
-    to {
-      opacity: 1;
-      transform: translateZ(0);
-    }
-  }
-
-  /* Waitlist Form */
-  .waitlist {
-    max-width: 520px;
-    background: #002f3b;
-    margin: 0 auto 70px;
-    padding: 30px 35px;
-    border-radius: 22px;
-    box-shadow:
-      0 0 35px #00d3bfff;
-    font-family: 'Orbitron', sans-serif;
-    opacity: 0;
-    animation: fadeInScale 1.5s ease forwards;
-    animation-delay: 2s;
-    user-select: none;
-    text-align: center;
-  }
-  .waitlist h3 {
-    margin-bottom: 20px;
-    color: #00ffe7;
-    font-size: 1.6rem;
-    letter-spacing: 2px;
-    text-shadow: 0 0 15px #00ffe7aa;
-  }
-  .waitlist form {
-    display: flex;
-    gap: 18px;
-    justify-content: center;
-  }
-  .waitlist input[type="email"] {
-    flex: 1;
-    padding: 14px 18px;
-    border-radius: 15px;
-    border: 2px solid #00ffe7;
-    font-size: 1.1rem;
-    background: #021d25;
-    color: #00fff8;
-    font-family: 'Orbitron', sans-serif;
-    outline: none;
-    box-shadow:
-      0 0 10px #00ffe7cc;
-    transition: border-color 0.3s ease;
-  }
-  .waitlist input[type="email"]:focus {
-    border-color: #00ffee;
-    box-shadow:
-      0 0 20px #00ffee;
-  }
-  .waitlist button {
-    background: #00ffe7;
-    color: #001a1c;
-    border: none;
-    border-radius: 15px;
-    padding: 14px 28px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Airbeat', cursive;
-    font-size: 1.2rem;
-    box-shadow:
-      0 0 18px #00ffe7ff,
-      0 0 30px #00ccbfff;
-    transition: background-color 0.35s ease, color 0.35s ease;
-    text-transform: uppercase;
-    letter-spacing: 1.3px;
-  }
-  .waitlist button:hover {
-    background-color: #00cc9d;
-    color: #e0fff8;
-    box-shadow:
-      0 0 30px #00cc9dff,
-      0 0 45px #00a079ff;
-  }
-  @keyframes fadeInScale {
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  /* Footer About & Developers */
-  footer {
-    background: #001518;
-    padding: 40px 20px 50px;
-    color: #00ffe7;
-    font-family: 'Orbitron', sans-serif;
-    text-align: center;
-    user-select: none;
-    border-top: 1px solid #004440cc;
-  }
-  footer p {
-    max-width: 920px;
-    margin: 0 auto 25px;
-    font-size: 1.1rem;
-    color: #00bfa2cc;
-    line-height: 1.5;
-    text-shadow: 0 0 15px #00bfa2aa;
-  }
-  footer .developers {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-  footer .dev {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #00a885cc;
-    font-size: 1rem;
-    width: 140px;
-    transition: color 0.3s ease;
-  }
-  footer .dev:hover {
-    color: #00ffe7ff;
-    text-shadow: 0 0 15px #00ffe7ff;
-  }
-  footer .dev img {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    border: 3px solid #00a87fcc;
-    margin-bottom: 10px;
-    object-fit: cover;
-    box-shadow: 0 0 18px #00a87fbb;
-    transition: box-shadow 0.4s ease;
-  }
-  footer .dev:hover img {
-    box-shadow: 0 0 30px #00ffe7ff;
-  }
-
-  /* Misc */
-  a, a:visited {
-    color: #00ffe7cc;
-    text-decoration: none;
-  }
-
 </style>
 </head>
 <body>
 
 <!-- Loading Screen -->
-<div id="loading-screen" aria-label="Loading progress screen">
-  NEON FURY
-  <div id="loading-progress" aria-live="polite" aria-atomic="true" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-    <div id="loading-bar"></div>
-  </div>
-  <div id="loading-percentage">0%</div>
+<div id="loadingScreen">
+  <h1>Loading Randi Vi</h1>
+  <div class="spinner"></div>
 </div>
 
-<!-- Sticky Launch Header -->
-<header class="sticky-bar" aria-label="Launch announcement">
-  🚀 Launching on 15th August 2025 - Prepare for Shadow Ops! 🚀
-</header>
-
-<main>
-
-  <!-- Headings and Subheadings -->
-  <h1 class="neon-text">Neon Fury</h1>
-  <h2>Shadow Ops - First-Person Shooter</h2>
-  <div class="subheading">Dive Into Neon Shadows. Lead The Fury.</div>
-
-  <!-- 3D Carousel -->
-  <div class="carousel-container" aria-label="Game feature carousel">
-    <div id="carousel" class="carousel" tabindex="0" aria-roledescription="carousel" aria-live="polite" aria-atomic="true" aria-label="Game features">
-      <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1600185361232-150c1f10f948?auto=format&fit=crop&w=800&q=80');" aria-label="Neon futuristic urban environment"></div>
-      <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?auto=format&fit=crop&w=800&q=80');" aria-label="Tactical weapon customization"></div>
-      <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80');" aria-label="FPS player with visor HUD"></div>
-      <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=800&q=80');" aria-label="Dynamic neon battlefield"></div>
-      <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1549924231-2da18353577d?auto=format&fit=crop&w=800&q=80');" aria-label="Advanced tech gear in combat"></div>
-    </div>
-    <div class="carousel-nav" role="group" aria-label="Carousel navigation buttons">
-      <button class="carousel-btn" id="prevBtn" aria-label="Previous feature">&#10094;</button>
-      <button class="carousel-btn" id="nextBtn" aria-label="Next feature">&#10095;</button>
+<!-- Main Content with 3D Animation -->
+<div id="mainContent">
+  <div id="title">Randi Vi</div>
+  <div class="scene">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face right"></div>
+      <div class="face left"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
     </div>
   </div>
-
-  <!-- FPS Screenshots -->
-  <section class="fps-screenshots" aria-label="HD FPS game screenshots">
-    <img src="https://cdn.wallpapersafari.com/37/22/JhYvAm.jpg" alt="Red Dead Redemption 2: Intense gameplay in wild west" />
-    <img src="https://cdn.wallpapersafari.com/62/22/mSOG7B.jpg" alt="Call of Duty: Warzone tactical battle scene" />
-    <img src="https://wallpaperaccess.com/full/5923084.jpg" alt="Battlefield 2042 futuristic combat" />
-    <img src="https://www.pixelstalk.net/wp-content/uploads/2016/05/Call-Of-Duty-FPS-Game-HD-Wallpaper.jpg" alt="Classic FPS gameplay action sequence" />
-  </section>
-
-  <!-- Testimonials -->
-  <section class="testimonials" aria-label="Player testimonials">
-    <div class="testimonial" style="animation-delay: 0.2s;">
-      <p>"Neon Fury brings a breathtaking neon-soaked FPS experience like no other."</p>
-      <div class="author">- ShadowPulse</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 0.4s;">
-      <p>"The custom weapon loadouts and futuristic visuals rocked my world."</p>
-      <div class="author">- BladeRunnerX</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 0.6s;">
-      <p>"Every firefight feels electric in the neon-lit battle zones."</p>
-      <div class="author">- NeonWarrior</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 0.8s;">
-      <p>"The waitlist signup was slick, and the hype is real!"</p>
-      <div class="author">- GamerZed</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 1s;">
-      <p>"Visually stunning with heart-pounding gameplay."</p>
-      <div class="author">- CyberSniper</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 1.2s;">
-      <p>"Neon Fury's unique style has me hooked for hours."</p>
-      <div class="author">- PixelRogue</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 1.4s;">
-      <p>"The 3D carousel on the site perfectly shows off all the cool features."</p>
-      <div class="author">- TechEnthusiast</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 1.6s;">
-      <p>"Smooth animations and an immersive UI make this website the real deal."</p>
-      <div class="author">- ConsoleKing</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 1.8s;">
-      <p>"The neon theme is perfect for late-night gaming marathons."</p>
-      <div class="author">- NightVolt</div>
-    </div>
-    <div class="testimonial" style="animation-delay: 2s;">
-      <p>"Don't miss the launch — Neon Fury is the next big thing in FPS gaming!"</p>
-      <div class="author">- NeoGamer</div>
-    </div>
-  </section>
-
-  <!-- Waitlist Form -->
-  <section class="waitlist" aria-label="Join waitlist form">
-    <h3>Join the Neon Fury Waitlist</h3>
-    <form id="waitlistForm" autocomplete="off" aria-live="polite">
-      <input type="email" id="email" name="email" placeholder="Enter your email address" required aria-required="true" aria-label="Email address"/>
-      <button type="submit" aria-label="Notify me button">Notify Me</button>
-    </form>
-  </section>
-
-</main>
-
-<!-- Footer About & Developers -->
-<footer>
-  <p>Neon Fury: Shadow Ops is an adrenaline-pumping FPP shooter set in a neon-drenched future, combining immersive tactical gameplay and jaw-dropping visual effects. Prepare to lead the fury and conquer the shadows.</p>
-  <div class="developers" aria-label="Developers team">
-    <div class="dev" tabindex="0">
-      <img src="https://randomuser.me/api/portraits/men/64.jpg" alt="Developer Jaxon Pierce" />
-      Jaxon Pierce
-    </div>
-    <div class="dev" tabindex="0">
-      <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Developer Aria Quinn" />
-      Aria Quinn
-    </div>
-    <div class="dev" tabindex="0">
-      <img src="https://randomuser.me/api/portraits/men/11.jpg" alt="Developer Ezra Lane" />
-      Ezra Lane
-    </div>
-    <div class="dev" tabindex="0">
-      <img src="https://randomuser.me/api/portraits/women/29.jpg" alt="Developer Zuri Blake" />
-      Zuri Blake
-    </div>
-  </div>
-</footer>
+</div>
 
 <script>
-  // Loading screen: animate loading bar and percentage from 0 to 100 in 3 seconds
-  const loadingScreen = document.getElementById('loading-screen');
-  const loadingBar = document.getElementById('loading-bar');
-  const loadingPercent = document.getElementById('loading-percentage');
-
-  let progress = 0;
-  const loadingDuration = 3000; // 3 seconds total
-  const updateInterval = 30; // ms per update
-  const step = 100 / (loadingDuration / updateInterval);
-
-  function incrementLoading() {
-    progress += step;
-    if (progress >= 100) {
-      progress = 100;
-      loadingBar.style.width = progress + '%';
-      loadingPercent.textContent = '100%';
-      setTimeout(() => {
-        // Fade out loading screen smoothly
-        loadingScreen.style.transition = 'opacity 0.7s ease';
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => {
-          loadingScreen.style.display = 'none';
-        }, 700);
-      }, 300);
-      window.dispatchEvent(new Event('loadingComplete'));
-      return;
-    }
-    loadingBar.style.width = progress + '%';
-    loadingPercent.textContent = Math.floor(progress) + '%';
-    setTimeout(incrementLoading, updateInterval);
-  }
-  incrementLoading();
-
-  // Carousel functionality
-  const carousel = document.getElementById('carousel');
-  const items = Array.from(carousel.children);
-  const itemCount = items.length;
-  const angle = 360 / itemCount;
-  let selectedIndex = 0;
-
-  // Position carousel items in 3D circle
-  function positionCarousel() {
-    items.forEach((item, i) => {
-      const rotateY = angle * i;
-      item.style.transform = `rotateY(${rotateY}deg) translateZ(480px)`;
-      item.style.opacity = i === selectedIndex ? '1' : '0.5';
-      item.style.filter = i === selectedIndex ? 'brightness(1)' : 'brightness(0.6)';
-      item.style.zIndex = i === selectedIndex ? '10' : '1';
-    });
-  }
-  positionCarousel();
-
-  // Update carousel rotation
-  function updateCarousel(index) {
-    const rotate = angle * index * -1;
-    carousel.style.transform = `translateZ(-480px) rotateY(${rotate}deg)`;
-    selectedIndex = (index + itemCount) % itemCount; // wrap around positive index
-    positionCarousel();
-  }
-  updateCarousel(selectedIndex);
-
-  // Navigation buttons
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    updateCarousel(selectedIndex + 1);
-  });
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    updateCarousel(selectedIndex - 1);
-  });
-
-  // Swipe support on carousel
-  let startX = 0;
-  let dragging = false;
-
-  carousel.addEventListener('pointerdown', e => {
-    startX = e.clientX;
-    dragging = true;
-    carousel.style.cursor = 'grabbing';
-  });
-  carousel.addEventListener('pointerup', e => {
-    if (!dragging) return;
-    let diff = e.clientX - startX;
-    if (diff > 40) updateCarousel(selectedIndex - 1);
-    else if (diff < -40) updateCarousel(selectedIndex + 1);
-    dragging = false;
-    carousel.style.cursor = 'grab';
-  });
-  carousel.addEventListener('pointerleave', () => {
-    if (dragging) {
-      dragging = false;
-      carousel.style.cursor = 'grab';
-    }
-  });
-
-  // Animate fade and 3D translate for testimonials and waitlist on scroll
-  const animatedElements = document.querySelectorAll('.testimonial, .waitlist');
-  function animateOnScroll() {
-    const trigger = window.innerHeight * 0.85;
-    animatedElements.forEach(el => {
-      const top = el.getBoundingClientRect().top;
-      if (top < trigger) {
-        el.style.opacity = '1';
-        el.style.transform = 'translateZ(0)';
-      }
-    });
-  }
-  window.addEventListener('scroll', animateOnScroll);
-  window.addEventListener('load', animateOnScroll);
-
-  // Waitlist form submit event with validation and alert
-  const form = document.getElementById('waitlistForm');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const input = e.target.email;
-    if (input.value.trim()) {
-      alert(`Thanks for joining Neon Fury's waitlist, ${input.value}!`);
-      input.value = '';
-    }
-  });
+  // Show loading for 3 seconds then reveal main content
+  setTimeout(() => {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  }, 3000);
 </script>
 
 </body>
